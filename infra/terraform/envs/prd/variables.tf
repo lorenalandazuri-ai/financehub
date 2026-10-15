@@ -10,3 +10,17 @@ variable "region" {
 variable "access_members" {
   type = list(string)
 }
+
+variable "domain" {
+  type = string
+}
+
+variable "cloudbuild_repository" {
+  type    = string
+  default = ""
+}
+
+variable "build_approvers" {
+  type    = list(string)
+  default = []
+}

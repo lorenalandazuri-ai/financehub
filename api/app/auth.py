@@ -1,6 +1,6 @@
 """Identidad del usuario.
 
-En Cloud Run, IAP ya autenticó a la persona antes de que la petición llegue al servicio y
+Detrás del balanceador, IAP ya autenticó a la persona antes de que la petición llegue al servicio y
 agrega un JWT firmado en el encabezado x-goog-iap-jwt-assertion. Aquí se verifica esa firma
 (no basta con leer el encabezado de correo, que es texto plano).
 En local no hay IAP: se usa DEV_USER_EMAIL.

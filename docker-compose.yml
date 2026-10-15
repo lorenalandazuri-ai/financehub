@@ -1,0 +1,14 @@
+# Los dos servicios como en GCP, con un nginx que hace de balanceador.
+# docker compose up --build  →  http://localhost:8080
+services:
+  api:
+    build: { context: ., dockerfile: api/Dockerfile }
+    environment:
+      DEV_USER_EMAIL: ${DEV_USER_EMAIL:-dev@xertica.com}
+  web:
+    build: { context: ., dockerfile: web/Dockerfile }
+  lb:
+    image: nginx:1.27-alpine
+    volumes: ["./local/lb.conf:/etc/nginx/conf.d/default.conf:ro"]
+    ports: ["8080:8080"]
+    depends_on: [api, web]

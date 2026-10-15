@@ -24,15 +24,22 @@ provider "google-beta" {
 }
 
 module "portal" {
-  source         = "../../modules/portal"
-  project_id     = var.project_id
-  environment    = "prd"
-  region         = var.region
-  access_members = var.access_members
+  source                = "../../modules/portal"
+  project_id            = var.project_id
+  environment           = "prd"
+  region                = var.region
+  domain                = var.domain
+  access_members        = var.access_members
+  cloudbuild_repository = var.cloudbuild_repository
+  build_approvers       = var.build_approvers
 }
 
-output "service_url" {
-  value = module.portal.service_url
+output "portal_url" {
+  value = module.portal.portal_url
+}
+
+output "lb_ip" {
+  value = module.portal.lb_ip
 }
 
 output "image_repository" {

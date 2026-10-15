@@ -18,25 +18,30 @@ variable "region" {
   default     = "us-central1"
 }
 
-variable "service_name" {
-  description = "Nombre del servicio de Cloud Run."
+variable "domain" {
+  description = "Dominio del portal (p. ej. financehub-dev.xertica.com). TI apunta su DNS a la IP del balanceador."
   type        = string
-  default     = "financehub"
 }
 
-variable "image" {
-  description = "Imagen inicial. Después Cloud Build despliega las versiones nuevas y Terraform no la toca."
+variable "access_members" {
+  description = "Quién puede entrar por IAP, p. ej. [\"group:financehub-usuarios@xertica.com\"]."
+  type        = list(string)
+}
+
+variable "web_image" {
+  description = "Imagen inicial del servicio web. Después Cloud Build despliega y Terraform no la toca."
   type        = string
   default     = "us-docker.pkg.dev/cloudrun/container/hello"
 }
 
-variable "access_members" {
-  description = "Quién puede entrar al portal por IAP, p. ej. [\"group:financehub-usuarios@xertica.com\"]."
-  type        = list(string)
+variable "api_image" {
+  description = "Imagen inicial de api-catalogo. Después Cloud Build despliega y Terraform no la toca."
+  type        = string
+  default     = "us-docker.pkg.dev/cloudrun/container/hello"
 }
 
 variable "max_instances" {
-  description = "Máximo de instancias de Cloud Run."
+  description = "Máximo de instancias por servicio de Cloud Run."
   type        = number
   default     = 2
 }
@@ -45,4 +50,16 @@ variable "catalog_dataset" {
   description = "Dataset de BigQuery con la tabla del catálogo."
   type        = string
   default     = "financehub"
+}
+
+variable "cloudbuild_repository" {
+  description = "Repositorio de Cloud Build (2.ª gen.) que conecta Davy: projects/P/locations/R/connections/C/repositories/N. Vacío = no se crean triggers."
+  type        = string
+  default     = ""
+}
+
+variable "build_approvers" {
+  description = "Quién aprueba los despliegues (solo aplica en prd), p. ej. [\"user:lorena.landazuri@xertica.com\"]."
+  type        = list(string)
+  default     = []
 }
