@@ -1,0 +1,214 @@
+/* Marca Xertica.ai 2026 (copiado del artefacto aprobado): papel Marfil/Crema, texto en tinta,
+   acentos solo en figuras, iconos y líneas. Tema único claro por decisión de marca. */
+:root {
+  --marfil: #FFFEF8;
+  --crema: #F2EDD8;
+  --offwhite: #E9E6DC;
+  --ink: #1E1E1E;
+  --tinta: #1A1814;
+  --line: rgb(26 24 20 / .14);
+  --line-strong: rgb(26 24 20 / .32);
+  --gris: #6B665C;
+  --amarillo: #FAF338;
+  --coral: #DE5B48;
+  --accent: #1899AF;
+  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: Inter, "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--marfil); color: var(--tinta); font: 16px/1.5 var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+.icon { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.eyebrow { font-size: 13px; font-weight: 500; letter-spacing: 1.5px; color: var(--gris); }
+.eyebrow-sm { font-size: 13px; font-weight: 500; color: var(--gris); }
+.accent-line { display: block; width: 48px; height: 3px; background: var(--accent); }
+.tag { font-size: 12px; font-weight: 600; padding: 1px 8px; border: 1px solid var(--line-strong); border-radius: 999px; white-space: nowrap; }
+
+/* Botones: píldora, sin sombra, hover oscurece, press desplaza 1px */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 999px;
+  border: 1px solid var(--tinta); background: transparent; cursor: pointer; text-decoration: none;
+  font: 600 15px var(--font-body); letter-spacing: -0.2px; white-space: nowrap;
+}
+.btn .icon { width: 18px; height: 18px; }
+.btn:hover { background: rgb(26 24 20 / .08); }
+.btn:active { transform: translateY(1px); }
+.btn.dark { background: var(--ink); border-color: var(--ink); color: var(--marfil); }
+.btn.dark:hover { background: #33302A; }
+.btn.small { height: 34px; padding: 0 14px; font-size: 14px; }
+.btn.full { width: 100%; height: 48px; }
+.btn.pending { border-style: dashed; border-color: var(--line-strong); color: var(--gris); font-weight: 500; cursor: default; }
+.btn.pending:hover { background: transparent; }
+.btn[disabled] { opacity: .5; cursor: progress; }
+
+/* ---------- Barra superior ---------- */
+.topbar {
+  height: 68px; display: flex; align-items: center; gap: 28px; padding-inline: 24px;
+  background: var(--marfil); border-bottom: 1px solid var(--line);
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+}
+.brand { display: flex; align-items: center; gap: 14px; text-decoration: none; flex: none; }
+.brand-logo { height: 22px; width: auto; display: block; }
+.product { font-size: 15px; font-weight: 500; padding-left: 14px; border-left: 1px solid var(--line-strong); }
+.search { position: relative; flex: 1; max-width: 520px; margin-inline: auto; }
+.search input {
+  width: 100%; height: 42px; padding: 0 96px 0 44px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: var(--marfil); color: var(--tinta); font: 15px var(--font-body);
+}
+.search input::placeholder { color: var(--gris); }
+.search input:focus { outline: none; border-color: var(--coral); }
+.search-icon { position: absolute; left: 16px; top: 11px; color: var(--gris); }
+.search-btn {
+  position: absolute; right: 4px; top: 4px; height: 34px; padding: 0 18px; border: 0; border-radius: 999px;
+  background: var(--ink); color: var(--marfil); font: 600 14px var(--font-body); cursor: pointer;
+}
+.search-btn:hover { background: #33302A; }
+.search-btn:active { transform: translateY(1px); }
+.search-results {
+  position: absolute; top: 50px; left: 0; right: 0; margin: 0; padding: 6px; list-style: none;
+  background: var(--crema); border: 1px solid var(--line-strong); border-radius: 12px; max-height: 60vh; overflow: auto;
+}
+.search-results a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; text-decoration: none; }
+.search-results a .grow { flex: 1; min-width: 0; }
+.search-results a small { display: block; color: var(--gris); font-size: 13px; }
+.search-results a.active, .search-results a:hover { background: var(--marfil); }
+.search-results .empty { padding: 12px; color: var(--gris); }
+.user { display: flex; align-items: center; gap: 12px; flex: none; }
+.user img { width: 32px; height: 32px; }
+.user-text { display: grid; text-align: right; line-height: 1.3; }
+.user-name { font-size: 14px; font-weight: 600; }
+.user-email { font-size: 12px; color: var(--gris); }
+
+/* ---------- Secciones ---------- */
+.section { padding: 48px clamp(16px, 5vw, 80px) 56px; }
+.section.crema { background: var(--crema); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.section-head h2 { font-size: 32px; letter-spacing: -1px; line-height: 1.15; }
+.section-head p { margin: 0; font-size: 14px; color: var(--gris); }
+
+/* Hero: texto a la izquierda, figura anclada al borde derecho */
+.hero, .country-hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; background: var(--marfil); border-bottom: 1px solid var(--line); }
+.hero-text, .country-hero-text { padding: 56px clamp(16px, 5vw, 80px) 52px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; min-width: 0; }
+.hero h1 { font-size: clamp(38px, 4.4vw, 56px); line-height: 1.02; letter-spacing: -2px; font-weight: 800; }
+.hero h1 .light { font-weight: 300; }
+.hero p, .country-hero p { font-size: 18px; line-height: 1.6; margin: 0; max-width: 56ch; }
+.hero-figure { width: clamp(200px, 26vw, 360px); }
+.hero-figure img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: right top; }
+
+/* Tarjetas de país: la figura vive anclada en la esquina, el texto sobre el papel y nunca encima de ella */
+.country-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 20px; }
+.country-card {
+  position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+  min-height: 236px; padding: 28px; background: var(--marfil); border: 1px solid var(--line); text-decoration: none;
+}
+.country-card:hover { border-color: var(--tinta); }
+.country-card:active { transform: translateY(1px); }
+.country-fig { position: absolute; top: 0; right: 0; width: 104px; height: 104px; }
+.country-fig svg { display: block; width: 100%; height: 100%; }
+.country-code, .country-name { max-width: calc(100% - 104px); }
+.country-code { font-family: var(--font-display); font-weight: 800; font-size: 56px; line-height: .9; letter-spacing: -2px; margin-top: 4px; }
+.country-code.long { font-size: 44px; letter-spacing: -1.5px; }
+.country-name { font-family: var(--font-display); font-weight: 700; font-size: 24px; letter-spacing: -0.5px; line-height: 1.2; }
+.country-meta { font-size: 14px; color: var(--gris); }
+.country-go { margin-top: auto; padding-top: 8px; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+.country-card:hover .country-go { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Página de país */
+.country-hero h1 { font-size: clamp(44px, 5vw, 64px); line-height: 1; letter-spacing: -2px; font-weight: 800; }
+.country-hero-text { padding-top: 28px; }
+.country-hero-fig { width: clamp(180px, 22vw, 300px); align-self: stretch; }
+.country-hero-fig svg { display: block; width: 100%; height: 100%; }
+.report-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 20px; }
+.report-card { background: var(--marfil); border: 1px solid var(--line); padding: 24px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.report-card .head { display: flex; align-items: center; gap: 12px; }
+.report-card .head { flex-wrap: wrap; }
+.status {
+  display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px 0 9px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: var(--offwhite); color: var(--tinta);
+  font: 500 13px var(--font-body); white-space: nowrap;
+}
+.report-card .head .status { margin-left: auto; }
+.report-card .head .icon { width: 26px; height: 26px; color: var(--accent); stroke-width: 1.6; }
+.status .icon, .report-card .head .status .icon { width: 16px; height: 16px; stroke-width: 2; color: inherit; }
+/* Mismo color de estado en todos los países, sin importar el acento de la tarjeta */
+.status.produccion { background: #2E8B5A; border-color: #2E8B5A; color: var(--marfil); font-weight: 600; }
+.status.desarrollo { background: var(--amarillo); border-color: var(--tinta); color: var(--tinta); font-weight: 600; }
+.status.por-iniciar { background: var(--offwhite); color: var(--gris); }
+.report-card h3 { font-size: 22px; letter-spacing: -0.5px; line-height: 1.2; }
+.report-card p { margin: 0; font-size: 15px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.report-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.report-meta { font-size: 13px; color: var(--gris); text-align: right; order: 2; }
+.note { margin: 24px 0 0; font-size: 14px; color: var(--gris); max-width: 70ch; }
+.hojas { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.hojas li { font-size: 13px; padding: 2px 10px; border: 1px solid var(--line-strong); border-radius: 999px; }
+
+.access-note {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap; max-width: 920px; margin-top: 28px; padding: 16px 20px;
+  background: var(--marfil); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+}
+.access-note > .icon { width: 24px; height: 24px; stroke-width: 1.6; align-self: flex-start; margin-top: 2px; }
+.access-text { flex: 1; min-width: min(100%, 280px); }
+.access-text > b { display: block; font-size: 15px; font-weight: 600; }
+.access-text p { margin: 2px 0 0; font-size: 14px; line-height: 1.55; }
+
+.pills { display: flex; flex-wrap: wrap; gap: 10px; }
+.pill-card { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 8px 12px; border: 1px solid var(--line-strong); border-radius: 999px; text-decoration: none; }
+.pill-card:hover { border-color: var(--tinta); background: var(--crema); }
+.pill-card span { font-size: 15px; font-weight: 500; }
+
+/* Grupo segmentado: colorway Negro Xertica, opción activa con check */
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg-opt {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line-strong);
+  background: transparent; text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap;
+}
+.seg-opt:hover { background: rgb(26 24 20 / .06); }
+.seg-opt.current { background: var(--ink); border-color: var(--ink); color: var(--marfil); }
+.seg-opt .check { width: 14px; height: 14px; display: none; }
+.seg-opt.current .check { display: block; }
+.switch { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.switch > span { font-size: 13px; font-weight: 500; color: var(--gris); }
+.crumbs { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--gris); }
+.crumbs a { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.crumbs a:hover { color: var(--tinta); text-decoration: underline; }
+.crumbs .icon { width: 16px; height: 16px; }
+
+/* Banderas: rectángulo 3:2 con filete de tinta para que el blanco no se pierda sobre el papel */
+.flag { display: block; flex: none; width: 30px; height: 20px; outline: 1px solid var(--line-strong); outline-offset: -1px; }
+.flag.lg { width: 54px; height: 36px; }
+.flag.sm { width: 18px; height: 12px; }
+.country-name { display: flex; align-items: center; gap: 10px; }
+.country-title { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.seg-opt { gap: 6px; }
+.seg-opt.current .flag { outline-color: rgb(255 254 248 / .5); }
+
+.avatar {
+  width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; flex: none;
+  background: var(--ink); color: var(--marfil); font: 600 13px var(--font-body);
+}
+.flags { display: inline-flex; gap: 4px; }
+.state { padding: 64px clamp(16px, 5vw, 80px); max-width: 70ch; }
+.state h1 { font-size: 32px; letter-spacing: -1px; margin-bottom: 12px; }
+.state p { margin: 0 0 16px; }
+@media (max-width: 1080px) { .user-text { display: none; } }
+@media (max-width: 760px) {
+  .topbar { height: auto; flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
+  .product { display: none; }
+  .user { margin-left: auto; }
+  .search { order: 3; flex-basis: 100%; max-width: none; }
+  .hero, .country-hero { grid-template-columns: 1fr; }
+  .hero-figure, .country-hero-fig { order: -1; width: 100%; height: 120px; }
+  .hero-text, .country-hero-text { padding: 28px 16px 32px; }
+  .section { padding: 32px 16px 40px; }
+  .country-card { min-height: 200px; padding: 22px; }
+  .country-fig { width: 84px; height: 84px; }
+  .country-code { font-size: 44px; }
+  .country-code.long { font-size: 36px; }
+  .country-code, .country-name { max-width: calc(100% - 84px); }
+}
+@media (prefers-reduced-motion: reduce) { .btn:active, .country-card:active { transform: none; } }

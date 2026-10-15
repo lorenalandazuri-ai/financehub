@@ -1,0 +1,48 @@
+# Corre en cada PR. Estos tres checks son los que exige la regla de la rama main.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check . && ruff format --check .
+      - run: pytest -q
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir la imagen (compila React y empaca FastAPI)
+        run: docker build -t financehub:ci .
+      - name: Probar la imagen
+        run: |
+          docker run -d --name fh -p 8080:8080 -e DEV_USER_EMAIL=ci@xertica.com financehub:ci
+          for i in $(seq 1 20); do curl -fs localhost:8080/api/health && break; sleep 1; done
+          curl -fs localhost:8080/ | grep -q '<div id="root">'
+          test "$(curl -fs localhost:8080/api/catalogo | python3 -c 'import json,sys; print(len(json.load(sys.stdin)["reports"]))')" = 8
+
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive infra/terraform
+      - name: Validar dev y prd (sin conectarse a GCP)
+        run: |
+          for env in dev prd; do
+            terraform -chdir=infra/terraform/envs/$env init -backend=false -input=false
+            terraform -chdir=infra/terraform/envs/$env validate
+          done

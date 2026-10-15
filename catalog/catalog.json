@@ -1,0 +1,36 @@
+{
+  "app": {
+    "title": "FinanceHub · Finanzas y Operaciones",
+    "org": "Finanzas y Operaciones",
+    "access": { "name": "Marcela Castellanos" }
+  },
+  "modules": [
+    {
+      "id": "cobranzas",
+      "name": "Cobranzas",
+      "icon": "receipt",
+      "description": "Cartera, aging y gestión de cobro por cliente.",
+      "keywords": ["cartera", "aging", "recaudo", "cxc"]
+    }
+  ],
+  "countries": [
+    { "id": "latam", "code": "LATAM", "name": "Latinoamérica", "subtitle": "Consolidado regional" },
+    { "id": "co", "code": "CO", "name": "Colombia" },
+    { "id": "mx", "code": "MX", "name": "México" },
+    { "id": "br", "code": "BR", "name": "Brasil" },
+    { "id": "ar", "code": "AR", "name": "Argentina" },
+    { "id": "pe", "code": "PE", "name": "Perú" },
+    { "id": "ec-cl", "code": "EC-CL", "name": "Ecuador y Chile", "flags": ["ec", "cl"] },
+    { "id": "us", "code": "US", "name": "Estados Unidos" }
+  ],
+  "reports": [
+    { "country": "latam", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/abfd8b51-5ae6-4e7c-be5c-1bfbb501fa47/page/vUQ8F" },
+    { "country": "co", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/3605872f-fb29-4be4-9ae2-4cb4bb272283/page/vUQ8F" },
+    { "country": "mx", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/430b0dbe-3765-4928-9b32-61cc0c2447f1/page/vUQ8F" },
+    { "country": "br", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/318a0e8e-05c5-4e3a-a325-fe834a6144d1/page/vUQ8F" },
+    { "country": "ar", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/0a17e48d-d115-4eac-9367-745828f6c792/page/vUQ8F" },
+    { "country": "pe", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/14fa899e-85e9-4c1b-a4f8-d94d0a10cb9a/page/vUQ8F" },
+    { "country": "ec-cl", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/343c071d-4fcc-42cb-a741-02c3f91c4b74/page/vUQ8F" },
+    { "country": "us", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/0a17e48d-d115-4eac-9367-745828f6c792/page/vUQ8F", "note": "PENDIENTE: este enlace es el mismo de Argentina. Pedir a Lorena el de USA." }
+  ]
+}

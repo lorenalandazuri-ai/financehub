@@ -1,0 +1,23 @@
+# Despliegue a Cloud Run. Se activa cuando existan los proyectos de GCP:
+#   gcloud builds submit --config cloudbuild.yaml --project co-xertica-financehub-dev
+substitutions:
+  _REGION: us-central1
+  _SERVICE: financehub
+  _REPO: financehub
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-t", "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/portal:$BUILD_ID", "."]
+  - name: gcr.io/cloud-builders/docker
+    args: ["push", "${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/portal:$BUILD_ID"]
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/portal:$BUILD_ID
+      - --region=${_REGION}
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/portal:$BUILD_ID

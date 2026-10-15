@@ -218,3 +218,22 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- FinanceHub ---
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+# Node
+node_modules/
+web/dist/
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform.lock.hcl.bak
+# Varios
+.env
+.DS_Store
