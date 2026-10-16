@@ -25,14 +25,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Construir la imagen (compila React y empaca FastAPI)
-        run: docker build -t financehub:ci .
-      - name: Probar la imagen
+      - name: Construir y levantar los dos servicios con el balanceador local
+        run: docker compose up --build -d
+      - name: Probar las rutas como en GCP (/ al web, /api a api-catalogo)
         run: |
-          docker run -d --name fh -p 8080:8080 -e DEV_USER_EMAIL=ci@xertica.com financehub:ci
-          for i in $(seq 1 20); do curl -fs localhost:8080/api/health && break; sleep 1; done
+          for i in $(seq 1 30); do curl -fs localhost:8080/api/health && break; sleep 1; done
           curl -fs localhost:8080/ | grep -q '<div id="root">'
           test "$(curl -fs localhost:8080/api/catalogo | python3 -c 'import json,sys; print(len(json.load(sys.stdin)["reports"]))')" = 8
+      - if: failure()
+        run: docker compose logs
 
   terraform:
     runs-on: ubuntu-latest

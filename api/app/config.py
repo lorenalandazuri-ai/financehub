@@ -14,16 +14,13 @@ class Settings:
     catalog_file: Path = Path(os.getenv("CATALOG_FILE", ROOT / "catalog" / "catalog.json"))
     bq_reports_table: str = os.getenv("BQ_REPORTS_TABLE", "")  # proyecto.dataset.tabla
 
-    # En Cloud Run: /projects/NUMERO_PROYECTO/locations/REGION/services/NOMBRE_SERVICIO
+    # Detrás del balanceador: /projects/NUMERO_PROYECTO/global/backendServices/ID_BACKEND_API
     # Vacío = modo local, sin IAP: se usa DEV_USER_EMAIL.
     iap_audience: str = os.getenv("IAP_AUDIENCE", "")
     dev_user_email: str = os.getenv("DEV_USER_EMAIL", "dev@xertica.com")
     allowed_domains: tuple[str, ...] = field(
         default_factory=lambda: tuple(os.getenv("ALLOWED_DOMAINS", "xertica.com").split(","))
     )
-
-    # Carpeta con el build de React (web/dist). Si no existe, solo se sirve la API.
-    static_dir: Path = Path(os.getenv("STATIC_DIR", ROOT / "web" / "dist"))
 
 
 settings = Settings()
