@@ -43,6 +43,20 @@ resource "google_artifact_registry_repository" "images" {
   format        = "DOCKER"
   description   = "Imágenes del portal FinanceHub"
 
+  # Limpieza: se borra toda imagen con más de 30 días, salvo las 10 más recientes de cada servicio
+  # (KEEP gana sobre DELETE). Así siempre queda la imagen en uso y varias para volver atrás.
+  # Una política KEEP sola no borra nada: necesita una DELETE.
+  cleanup_policy_dry_run = false
+
+  cleanup_policies {
+    id     = "delete-older-than-30d"
+    action = "DELETE"
+    condition {
+      tag_state  = "ANY"
+      older_than = "2592000s" # 30 días
+    }
+  }
+
   cleanup_policies {
     id     = "keep-last-10"
     action = "KEEP"
