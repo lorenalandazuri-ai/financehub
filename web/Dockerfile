@@ -9,5 +9,6 @@ RUN npm run build
 # nginx sin root, escucha en 8080 (el puerto por defecto de Cloud Run).
 FROM nginxinc/nginx-unprivileged:1.27-alpine
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
+COPY web/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /web/dist /usr/share/nginx/html
 EXPOSE 8080
