@@ -4,8 +4,10 @@ Detrás del balanceador, IAP ya autenticó a la persona antes de que la petició
 agrega un JWT firmado en el encabezado x-goog-iap-jwt-assertion. Aquí se verifica esa firma
 (no basta con leer el encabezado de correo, que es texto plano).
 En local no hay IAP: se usa DEV_USER_EMAIL.
+En Cloud Run, si falta IAP_AUDIENCE la petición se rechaza: nunca se cae al usuario de desarrollo.
 """
 
+import logging
 from dataclasses import dataclass
 
 from fastapi import HTTPException, Request
@@ -16,6 +18,7 @@ from .config import settings
 
 IAP_CERTS_URL = "https://www.gstatic.com/iap/verify/public_key"
 _transport = google_requests.Request()
+log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -44,7 +47,14 @@ def _email_from_iap(request: Request) -> str:
 
 
 def current_user(request: Request) -> User:
-    email = _email_from_iap(request) if settings.iap_audience else settings.dev_user_email
+    if settings.iap_audience:
+        email = _email_from_iap(request)
+    elif settings.on_cloud_run:
+        # Error de configuración del despliegue: sin audience no se puede verificar a nadie.
+        log.error("IAP_AUDIENCE no está definida en Cloud Run: se rechaza la petición")
+        raise HTTPException(503, "Servicio mal configurado: falta IAP_AUDIENCE")
+    else:
+        email = settings.dev_user_email
     email = email.lower()
     if email.rsplit("@", 1)[-1] not in settings.allowed_domains:
         raise HTTPException(403, "Cuenta fuera de la compañía")

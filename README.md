@@ -19,6 +19,9 @@ Usuario ──► Balanceador HTTPS + IAP (grupo financehub-usuarios@xertica.com
 El navegador llama a la API por el mismo dominio y con la misma sesión de IAP: sin CORS ni tokens
 entre servicios. Los dos servicios solo aceptan tráfico del balanceador.
 
+La API verifica la firma del JWT de IAP con `IAP_AUDIENCE` (la pone Terraform). Sin esa variable solo
+funciona en local, con `DEV_USER_EMAIL`: en Cloud Run (`K_SERVICE` definida) rechaza toda petición con 503.
+
 | Carpeta | Qué hay |
 |---|---|
 | `web/` | React + Vite (pantallas portadas del artefacto aprobado), `Dockerfile` y `nginx.conf`. |
