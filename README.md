@@ -78,7 +78,6 @@ Para el MVP todo el catálogo vive en `catalog/catalog.json` y va dentro de la i
 
 - **La API solo entrega los tableros con `status: "produccion"`.** Los que están en `desarrollo` o
   `por-iniciar` pueden quedar en el archivo, pero no salen en el portal.
-- **Pendiente:** el enlace de Cobranzas USA es el mismo de Argentina (campo `note`).
 
 ## Desplegar (cuando TI entregue los proyectos)
 

@@ -31,6 +31,6 @@
     { "country": "ar", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/0a17e48d-d115-4eac-9367-745828f6c792/page/vUQ8F" },
     { "country": "pe", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/14fa899e-85e9-4c1b-a4f8-d94d0a10cb9a/page/vUQ8F" },
     { "country": "ec-cl", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/343c071d-4fcc-42cb-a741-02c3f91c4b74/page/vUQ8F" },
-    { "country": "us", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/0a17e48d-d115-4eac-9367-745828f6c792/page/vUQ8F", "note": "PENDIENTE: este enlace es el mismo de Argentina. Pedir a Lorena el de USA." }
+    { "country": "us", "module": "cobranzas", "status": "produccion", "url": "https://lookerstudio.google.com/reporting/2fadc367-bef6-4aac-b360-5ecfc51a3348/page/vUQ8F" }
   ]
 }
