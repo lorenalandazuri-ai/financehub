@@ -28,6 +28,26 @@ def test_internal_notes_are_not_exposed():
     assert all("note" not in r for r in data["reports"])
 
 
+def test_catalog_only_publishes_production_dashboards(monkeypatch, tmp_path):
+    import json
+    from dataclasses import replace
+
+    from app import catalog
+
+    url = "https://lookerstudio.google.com/reporting/x"
+    statuses = ["produccion", "desarrollo", "por-iniciar", "otro", None]
+    reports = [{"country": "co", "module": "cobranzas", "url": url, "status": s} for s in statuses]
+    test_file = tmp_path / "catalog.json"
+    test_file.write_text(json.dumps({"countries": [], "modules": [], "reports": reports}))
+    monkeypatch.setattr(catalog, "settings", replace(catalog.settings, catalog_file=test_file))
+    catalog.load_catalog.cache_clear()
+    try:
+        data = client.get("/api/catalogo").json()
+    finally:
+        catalog.load_catalog.cache_clear()
+    assert [r["status"] for r in data["reports"]] == ["produccion"]
+
+
 def test_rejects_accounts_outside_the_company(monkeypatch):
     from dataclasses import replace
 

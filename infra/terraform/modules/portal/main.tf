@@ -9,7 +9,6 @@ locals {
     "iap.googleapis.com",
     "artifactregistry.googleapis.com",
     "cloudbuild.googleapis.com",
-    "bigquery.googleapis.com",
     "iam.googleapis.com",
   ]
 
@@ -55,25 +54,9 @@ resource "google_artifact_registry_repository" "images" {
   depends_on = [google_project_service.apis]
 }
 
-# ---------- Catálogo ----------
-resource "google_bigquery_dataset" "catalog" {
-  project     = var.project_id
-  dataset_id  = var.catalog_dataset
-  location    = var.region
-  description = "Catálogo de tableros del portal FinanceHub (solo enlaces, sin datos)."
-  depends_on  = [google_project_service.apis]
-}
-
-resource "google_bigquery_table" "reports" {
-  project             = var.project_id
-  dataset_id          = google_bigquery_dataset.catalog.dataset_id
-  table_id            = "reports"
-  description         = "Un registro por tablero: país, módulo, enlace y estado."
-  schema              = file("${path.module}/../../../../catalog/reports_schema.json")
-  deletion_protection = local.protected
-}
-
 # ---------- Servicios de Cloud Run ----------
+# El catálogo de tableros (catalog/catalog.json) va dentro de la imagen de api-catalogo:
+# no hay base de datos ni permisos de datos para la API.
 # Solo aceptan tráfico del balanceador; IAP los llama con su agente de servicio.
 resource "google_cloud_run_v2_service" "web" {
   project             = var.project_id
@@ -121,14 +104,6 @@ resource "google_cloud_run_v2_service" "api" {
       image = var.api_image
       resources {
         limits = { cpu = "1", memory = "512Mi" }
-      }
-      env {
-        name  = "CATALOG_SOURCE"
-        value = "bigquery"
-      }
-      env {
-        name  = "BQ_REPORTS_TABLE"
-        value = "${var.project_id}.${google_bigquery_dataset.catalog.dataset_id}.${google_bigquery_table.reports.table_id}"
       }
       # La API verifica que el JWT de IAP venga de su propio backend del balanceador.
       env {

@@ -13,7 +13,7 @@ Usuario ──► Balanceador HTTPS + IAP (grupo financehub-usuarios@xertica.com
               └── /api/*   ──► Cloud Run "api-catalogo"     FastAPI
                                  ├── /api/me        quién es el usuario (JWT de IAP verificado)
                                  └── /api/catalogo  países, módulos y tableros
-                                                    (catalog.json en local, BigQuery en dev/prd)
+                                                    (catalog/catalog.json, dentro de la imagen)
 ```
 
 El navegador llama a la API por el mismo dominio y con la misma sesión de IAP: sin CORS ni tokens
@@ -26,8 +26,8 @@ funciona en local, con `DEV_USER_EMAIL`: en Cloud Run (`K_SERVICE` definida) rec
 |---|---|
 | `web/` | React + Vite (pantallas portadas del artefacto aprobado), `Dockerfile` y `nginx.conf`. |
 | `api/` | api-catalogo en FastAPI y su `Dockerfile`. |
-| `catalog/` | Catálogo de prueba con los 8 tableros de Cobranzas, esquema de la tabla de BigQuery y script de carga. |
-| `infra/terraform/` | Módulo `portal`: balanceador, IAP, Cloud Run, cuentas de servicio, IAM, BigQuery, Artifact Registry y triggers de Cloud Build. Ambientes `dev`, `hml` y `prd`. |
+| `catalog/` | `catalog.json`: países, módulos y los 8 tableros de Cobranzas. |
+| `infra/terraform/` | Módulo `portal`: balanceador, IAP, Cloud Run, cuentas de servicio, IAM, Artifact Registry y triggers de Cloud Build. Ambientes `dev`, `hml` y `prd`. |
 | `docker-compose.yml` | Los dos servicios + un nginx que enruta igual que el balanceador. |
 | `cloudbuild.yaml` | Construye y despliega los dos servicios. |
 
@@ -59,11 +59,25 @@ Abrir http://localhost:8080. Pruebas de la API: `cd api && .venv/bin/pytest -q`.
 
 ## Catálogo
 
-- **Local:** `catalog/catalog.json`. Países y módulos + un registro por tablero (`reports`).
-- **dev/prd:** la tabla `financehub.reports` en BigQuery (mismo esquema, `catalog/reports_schema.json`).
-  Así Finanzas cambia o agrega un enlace sin volver a desplegar. Carga inicial:
-  `./catalog/load_to_bigquery.sh xertica-financehub-dev`.
-- Solo se publica lo que está en producción en Looker.
+Para el MVP todo el catálogo vive en `catalog/catalog.json` y va dentro de la imagen de api-catalogo
+(sin base de datos). **Cambiar o agregar un enlace es un PR y un despliegue.**
+
+- `app`, `modules` y `countries`: textos del portal, módulos y países.
+- `reports`: un registro por tablero.
+
+| Campo | Obligatorio | Qué es |
+|---|---|---|
+| `country` | sí | ID del país (`latam`, `co`, `mx`, `br`, `ar`, `pe`, `ec-cl`, `us`) |
+| `module` | sí | ID del módulo (`cobranzas`…) |
+| `url` | sí | Enlace de vista del tablero en Looker Studio |
+| `status` | sí | `produccion`, `desarrollo` o `por-iniciar` |
+| `title` | no | Título si un país tiene más de un tablero del mismo módulo |
+| `description` | no | Descripción propia; si falta se usa la del módulo |
+| `refresh` | no | Frecuencia de actualización (Diario, Semanal…) |
+| `note` | no | Nota interna: la API no la entrega |
+
+- **La API solo entrega los tableros con `status: "produccion"`.** Los que están en `desarrollo` o
+  `por-iniciar` pueden quedar en el archivo, pero no salen en el portal.
 - **Pendiente:** el enlace de Cobranzas USA es el mismo de Argentina (campo `note`).
 
 ## Desplegar (cuando TI entregue los proyectos)
@@ -75,8 +89,7 @@ Quién hace qué: João crea los proyectos dev, hml y prd; Davy conecta este rep
 3. `terraform -chdir=infra/terraform/envs/dev init && terraform -chdir=infra/terraform/envs/dev apply`
 4. Pedir a TI un registro DNS A del dominio hacia la salida `lb_ip`. El certificado se activa solo
    cuando el DNS apunta bien (puede tardar hasta ~1 hora).
-5. Cargar el catálogo a BigQuery: `./catalog/load_to_bigquery.sh xertica-financehub-dev`.
-6. Desplegar: dev despliega con cada push a `main`. **hml y prd despliegan solo por Cloud Build, con un tag
+5. Desplegar: dev despliega con cada push a `main`. **hml y prd despliegan solo por Cloud Build, con un tag
    `v*` y la aprobación de Lorena.**
 
 ## Forma de trabajo

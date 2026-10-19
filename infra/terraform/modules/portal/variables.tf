@@ -13,7 +13,7 @@ variable "environment" {
 }
 
 variable "region" {
-  description = "Región de Cloud Run, Artifact Registry y BigQuery."
+  description = "Región de Cloud Run y Artifact Registry."
   type        = string
   default     = "us-central1"
 }
@@ -44,12 +44,6 @@ variable "max_instances" {
   description = "Máximo de instancias por servicio de Cloud Run."
   type        = number
   default     = 2
-}
-
-variable "catalog_dataset" {
-  description = "Dataset de BigQuery con la tabla del catálogo."
-  type        = string
-  default     = "financehub"
 }
 
 variable "cloudbuild_repository" {
