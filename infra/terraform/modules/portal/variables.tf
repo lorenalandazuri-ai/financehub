@@ -1,19 +1,19 @@
 variable "project_id" {
-  description = "Proyecto de GCP del ambiente (co-xertica-financehub-dev o -prd)."
+  description = "Proyecto de GCP del ambiente (xertica-financehub-dev, -hml o -prd)."
   type        = string
 }
 
 variable "environment" {
-  description = "dev o prd."
+  description = "dev, hml o prd."
   type        = string
   validation {
-    condition     = contains(["dev", "prd"], var.environment)
-    error_message = "environment debe ser dev o prd."
+    condition     = contains(["dev", "hml", "prd"], var.environment)
+    error_message = "environment debe ser dev, hml o prd."
   }
 }
 
 variable "region" {
-  description = "Región de Cloud Run, Artifact Registry y BigQuery."
+  description = "Región de Cloud Run y Artifact Registry."
   type        = string
   default     = "us-central1"
 }
@@ -46,12 +46,6 @@ variable "max_instances" {
   default     = 2
 }
 
-variable "catalog_dataset" {
-  description = "Dataset de BigQuery con la tabla del catálogo."
-  type        = string
-  default     = "financehub"
-}
-
 variable "cloudbuild_repository" {
   description = "Repositorio de Cloud Build (2.ª gen.) que conecta Davy: projects/P/locations/R/connections/C/repositories/N. Vacío = no se crean triggers."
   type        = string
@@ -59,7 +53,7 @@ variable "cloudbuild_repository" {
 }
 
 variable "build_approvers" {
-  description = "Quién aprueba los despliegues (solo aplica en prd), p. ej. [\"user:lorena.landazuri@xertica.com\"]."
+  description = "Quién aprueba los despliegues (solo aplica en hml y prd), p. ej. [\"user:lorena.landazuri@xertica.com\"]."
   type        = list(string)
   default     = []
 }

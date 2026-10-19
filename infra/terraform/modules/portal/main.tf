@@ -9,13 +9,15 @@ locals {
     "iap.googleapis.com",
     "artifactregistry.googleapis.com",
     "cloudbuild.googleapis.com",
-    "bigquery.googleapis.com",
     "iam.googleapis.com",
   ]
 
   web_service       = "financehub-web"
   api_service       = "api-catalogo"
   iap_service_agent = "serviceAccount:service-${data.google_project.this.number}@gcp-sa-iap.iam.gserviceaccount.com"
+
+  # hml es la antesala de prd: misma protección contra borrado y despliegue con aprobación.
+  protected = contains(["hml", "prd"], var.environment)
 }
 
 resource "google_project_service" "apis" {
@@ -41,6 +43,30 @@ resource "google_artifact_registry_repository" "images" {
   format        = "DOCKER"
   description   = "Imágenes del portal FinanceHub"
 
+  # Limpieza: se borra toda imagen con más de 30 días, salvo las 10 más recientes de cada servicio y
+  # las de una versión (tag v*, las que corren en hml y prd). KEEP gana sobre DELETE: así nunca se
+  # borra la imagen en uso ni las necesarias para volver atrás, aunque dev construya muchas más.
+  # Una política KEEP sola no borra nada: necesita una DELETE.
+  cleanup_policy_dry_run = false
+
+  cleanup_policies {
+    id     = "delete-older-than-30d"
+    action = "DELETE"
+    condition {
+      tag_state  = "ANY"
+      older_than = "2592000s" # 30 días
+    }
+  }
+
+  cleanup_policies {
+    id     = "keep-releases"
+    action = "KEEP"
+    condition {
+      tag_state    = "TAGGED"
+      tag_prefixes = ["v"]
+    }
+  }
+
   cleanup_policies {
     id     = "keep-last-10"
     action = "KEEP"
@@ -52,32 +78,16 @@ resource "google_artifact_registry_repository" "images" {
   depends_on = [google_project_service.apis]
 }
 
-# ---------- Catálogo ----------
-resource "google_bigquery_dataset" "catalog" {
-  project     = var.project_id
-  dataset_id  = var.catalog_dataset
-  location    = var.region
-  description = "Catálogo de tableros del portal FinanceHub (solo enlaces, sin datos)."
-  depends_on  = [google_project_service.apis]
-}
-
-resource "google_bigquery_table" "reports" {
-  project             = var.project_id
-  dataset_id          = google_bigquery_dataset.catalog.dataset_id
-  table_id            = "reports"
-  description         = "Un registro por tablero: país, módulo, enlace y estado."
-  schema              = file("${path.module}/../../../../catalog/reports_schema.json")
-  deletion_protection = var.environment == "prd"
-}
-
 # ---------- Servicios de Cloud Run ----------
+# El catálogo de tableros (catalog/catalog.json) va dentro de la imagen de api-catalogo:
+# no hay base de datos ni permisos de datos para la API.
 # Solo aceptan tráfico del balanceador; IAP los llama con su agente de servicio.
 resource "google_cloud_run_v2_service" "web" {
   project             = var.project_id
   name                = local.web_service
   location            = var.region
   ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-  deletion_protection = var.environment == "prd"
+  deletion_protection = local.protected
 
   template {
     service_account = google_service_account.web.email
@@ -106,7 +116,7 @@ resource "google_cloud_run_v2_service" "api" {
   name                = local.api_service
   location            = var.region
   ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-  deletion_protection = var.environment == "prd"
+  deletion_protection = local.protected
 
   template {
     service_account = google_service_account.api.email
@@ -118,14 +128,6 @@ resource "google_cloud_run_v2_service" "api" {
       image = var.api_image
       resources {
         limits = { cpu = "1", memory = "512Mi" }
-      }
-      env {
-        name  = "CATALOG_SOURCE"
-        value = "bigquery"
-      }
-      env {
-        name  = "BQ_REPORTS_TABLE"
-        value = "${var.project_id}.${google_bigquery_dataset.catalog.dataset_id}.${google_bigquery_table.reports.table_id}"
       }
       # La API verifica que el JWT de IAP venga de su propio backend del balanceador.
       env {

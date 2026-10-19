@@ -13,10 +13,6 @@ output "image_repository" {
   value       = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.images.repository_id}"
 }
 
-output "catalog_table" {
-  value = "${var.project_id}.${google_bigquery_dataset.catalog.dataset_id}.${google_bigquery_table.reports.table_id}"
-}
-
 output "deployer_service_account" {
   value = google_service_account.deployer.email
 }

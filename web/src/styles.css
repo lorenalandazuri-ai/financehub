@@ -136,8 +136,6 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; margin: 0; text
 .status .icon, .report-card .head .status .icon { width: 16px; height: 16px; stroke-width: 2; color: inherit; }
 /* Mismo color de estado en todos los países, sin importar el acento de la tarjeta */
 .status.produccion { background: #2E8B5A; border-color: #2E8B5A; color: var(--marfil); font-weight: 600; }
-.status.desarrollo { background: var(--amarillo); border-color: var(--tinta); color: var(--tinta); font-weight: 600; }
-.status.por-iniciar { background: var(--offwhite); color: var(--gris); }
 .report-card h3 { font-size: 22px; letter-spacing: -0.5px; line-height: 1.2; }
 .report-card p { margin: 0; font-size: 15px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .report-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 12px; }

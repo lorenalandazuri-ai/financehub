@@ -31,6 +31,9 @@ jobs:
         run: |
           for i in $(seq 1 30); do curl -fs localhost:8080/api/health && break; sleep 1; done
           curl -fs localhost:8080/ | grep -q '<div id="root">'
+          # Encabezados de seguridad del plan (sección 6), en la página y en los archivos estáticos.
+          curl -fsI localhost:8080/ | grep -qi '^content-security-policy: frame-src https://lookerstudio.google.com'
+          curl -fsI localhost:8080/ | grep -qi '^strict-transport-security:'
           test "$(curl -fs localhost:8080/api/catalogo | python3 -c 'import json,sys; print(len(json.load(sys.stdin)["reports"]))')" = 8
       - if: failure()
         run: docker compose logs
@@ -41,9 +44,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
       - run: terraform fmt -check -recursive infra/terraform
-      - name: Validar dev y prd (sin conectarse a GCP)
+      - name: Validar dev, hml y prd (sin conectarse a GCP)
         run: |
-          for env in dev prd; do
+          for env in dev hml prd; do
             terraform -chdir=infra/terraform/envs/$env init -backend=false -input=false
             terraform -chdir=infra/terraform/envs/$env validate
           done

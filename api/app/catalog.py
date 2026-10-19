@@ -1,48 +1,50 @@
 """Catálogo de tableros.
 
-El portal no guarda datos: solo enlaces a Looker Studio. Países y módulos vienen del archivo;
-los tableros vienen del archivo (local) o de una tabla de BigQuery (dev/prd), con el mismo
-esquema (catalog/reports_schema.json). Así Finanzas cambia un enlace sin volver a desplegar.
+El portal no guarda datos: solo enlaces a Looker Studio. Para el MVP todo el catálogo (países,
+módulos y tableros) vive en catalog/catalog.json, que va dentro de la imagen: cambiar o agregar un
+enlace es un PR y un despliegue.
+Solo se publican los tableros en producción; los que están en desarrollo o por iniciar se quedan
+en el archivo pero no salen de la API.
 """
 
 import json
-import time
+import logging
+import unicodedata
 from functools import lru_cache
 
 from .config import settings
 
-STATUSES = {"produccion", "desarrollo", "por-iniciar"}
-CACHE_SECONDS = 300
+PUBLISHED_STATUS = "produccion"
+KNOWN_STATUSES = {PUBLISHED_STATUS, "desarrollo", "por-iniciar"}
+log = logging.getLogger(__name__)
 PUBLIC_FIELDS = ("country", "module", "url", "status", "title", "description", "refresh")
 
-_cache: dict = {"at": 0.0, "data": None}
+
+def _status(report: dict) -> str:
+    # "Producción" y "produccion" son lo mismo: sin tildes, en minúsculas.
+    raw = unicodedata.normalize("NFKD", str(report.get("status") or ""))
+    status = "".join(c for c in raw if not unicodedata.combining(c)).strip().lower()
+    if status not in KNOWN_STATUSES:
+        log.warning(
+            "Tablero con estado desconocido %r: no se publica (%s)",
+            report.get("status"),
+            report.get("url"),
+        )
+    return status
+
+
+def _public(report: dict) -> dict:
+    # Quita los campos internos (p. ej. "note") y los vacíos.
+    return {k: report[k] for k in PUBLIC_FIELDS if report.get(k)}
 
 
 @lru_cache
-def _base() -> dict:
-    return json.loads(settings.catalog_file.read_text(encoding="utf-8"))
-
-
-def _reports_from_bigquery() -> list[dict]:
-    from google.cloud import bigquery  # import diferido: en local no hace falta
-
-    client = bigquery.Client()
-    query = f"SELECT * FROM `{settings.bq_reports_table}`"
-    return [dict(row) for row in client.query(query).result()]
-
-
-def _clean(report: dict) -> dict:
-    out = {k: report[k] for k in PUBLIC_FIELDS if report.get(k)}
-    if out.get("status") not in STATUSES:
-        out["status"] = "por-iniciar"
-    return out
-
-
 def load_catalog() -> dict:
-    if _cache["data"] and time.time() - _cache["at"] < CACHE_SECONDS:
-        return _cache["data"]
-    base = _base()
-    raw = _reports_from_bigquery() if settings.catalog_source == "bigquery" else base["reports"]
-    data = {**base, "reports": [_clean(r) for r in raw]}
-    _cache.update(at=time.time(), data=data)
-    return data
+    # El archivo no cambia mientras corre el servicio: se lee una sola vez.
+    data = json.loads(settings.catalog_file.read_text(encoding="utf-8"))
+    reports = [
+        {**_public(r), "status": PUBLISHED_STATUS}
+        for r in data["reports"]
+        if _status(r) == PUBLISHED_STATUS
+    ]
+    return {**data, "reports": reports}
