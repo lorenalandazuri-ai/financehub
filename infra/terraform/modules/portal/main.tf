@@ -16,6 +16,9 @@ locals {
   web_service       = "financehub-web"
   api_service       = "api-catalogo"
   iap_service_agent = "serviceAccount:service-${data.google_project.this.number}@gcp-sa-iap.iam.gserviceaccount.com"
+
+  # hml es la antesala de prd: misma protección contra borrado y despliegue con aprobación.
+  protected = contains(["hml", "prd"], var.environment)
 }
 
 resource "google_project_service" "apis" {
@@ -67,7 +70,7 @@ resource "google_bigquery_table" "reports" {
   table_id            = "reports"
   description         = "Un registro por tablero: país, módulo, enlace y estado."
   schema              = file("${path.module}/../../../../catalog/reports_schema.json")
-  deletion_protection = var.environment == "prd"
+  deletion_protection = local.protected
 }
 
 # ---------- Servicios de Cloud Run ----------
@@ -77,7 +80,7 @@ resource "google_cloud_run_v2_service" "web" {
   name                = local.web_service
   location            = var.region
   ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-  deletion_protection = var.environment == "prd"
+  deletion_protection = local.protected
 
   template {
     service_account = google_service_account.web.email
@@ -106,7 +109,7 @@ resource "google_cloud_run_v2_service" "api" {
   name                = local.api_service
   location            = var.region
   ingress             = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
-  deletion_protection = var.environment == "prd"
+  deletion_protection = local.protected
 
   template {
     service_account = google_service_account.api.email

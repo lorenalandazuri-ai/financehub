@@ -1,5 +1,5 @@
 # Construye y despliega los dos servicios. Lo dispara el trigger que crea Terraform
-# (dev: push a main; prd: tag v*, con aprobación de Lorena).
+# (dev: push a main; hml y prd: tag v*, con aprobación de Lorena).
 substitutions:
   _REGION: us-central1
   _REPO: financehub

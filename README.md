@@ -24,7 +24,7 @@ entre servicios. Los dos servicios solo aceptan tráfico del balanceador.
 | `web/` | React + Vite (pantallas portadas del artefacto aprobado), `Dockerfile` y `nginx.conf`. |
 | `api/` | api-catalogo en FastAPI y su `Dockerfile`. |
 | `catalog/` | Catálogo de prueba con los 8 tableros de Cobranzas, esquema de la tabla de BigQuery y script de carga. |
-| `infra/terraform/` | Módulo `portal`: balanceador, IAP, Cloud Run, cuentas de servicio, IAM, BigQuery, Artifact Registry y triggers de Cloud Build. Ambientes `dev` y `prd`. |
+| `infra/terraform/` | Módulo `portal`: balanceador, IAP, Cloud Run, cuentas de servicio, IAM, BigQuery, Artifact Registry y triggers de Cloud Build. Ambientes `dev`, `hml` y `prd`. |
 | `docker-compose.yml` | Los dos servicios + un nginx que enruta igual que el balanceador. |
 | `cloudbuild.yaml` | Construye y despliega los dos servicios. |
 
@@ -65,15 +65,15 @@ Abrir http://localhost:8080. Pruebas de la API: `cd api && .venv/bin/pytest -q`.
 
 ## Desplegar (cuando TI entregue los proyectos)
 
-Quién hace qué: João crea los proyectos dev y prd; Davy conecta este repo con Cloud Build en dev.
+Quién hace qué: João crea los proyectos dev, hml y prd; Davy conecta este repo con Cloud Build en dev.
 
 1. Crear el bucket del estado de Terraform y descomentar el `backend "gcs"` en `infra/terraform/envs/dev/main.tf`.
-2. Completar los `TODO` de `terraform.tfvars` (dominio, repositorio de Cloud Build; en prd, el correo de quien aprueba).
+2. Completar los `TODO` de `terraform.tfvars` (dominio, repositorio de Cloud Build; en hml y prd, el correo de quien aprueba).
 3. `terraform -chdir=infra/terraform/envs/dev init && terraform -chdir=infra/terraform/envs/dev apply`
 4. Pedir a TI un registro DNS A del dominio hacia la salida `lb_ip`. El certificado se activa solo
    cuando el DNS apunta bien (puede tardar hasta ~1 hora).
 5. Cargar el catálogo a BigQuery: `./catalog/load_to_bigquery.sh xertica-financehub-dev`.
-6. Desplegar: dev despliega con cada push a `main`. **prd despliega solo por Cloud Build, con un tag
+6. Desplegar: dev despliega con cada push a `main`. **hml y prd despliegan solo por Cloud Build, con un tag
    `v*` y la aprobación de Lorena.**
 
 ## Forma de trabajo

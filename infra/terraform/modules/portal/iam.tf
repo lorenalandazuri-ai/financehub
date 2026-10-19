@@ -27,7 +27,7 @@ resource "google_bigquery_dataset_iam_member" "api_reads_catalog" {
   member     = google_service_account.api.member
 }
 
-# Cloud Build: construye, publica y despliega. En prd es la única vía de despliegue.
+# Cloud Build: construye, publica y despliega. En hml y prd es la única vía de despliegue.
 resource "google_service_account" "deployer" {
   project      = var.project_id
   account_id   = "financehub-deployer"
