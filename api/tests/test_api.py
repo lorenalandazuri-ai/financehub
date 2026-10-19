@@ -35,7 +35,7 @@ def test_catalog_only_publishes_production_dashboards(monkeypatch, tmp_path):
     from app import catalog
 
     url = "https://lookerstudio.google.com/reporting/x"
-    statuses = ["produccion", "desarrollo", "por-iniciar", "otro", None]
+    statuses = ["produccion", "Producción", "desarrollo", "por-iniciar", "otro", None]
     reports = [{"country": "co", "module": "cobranzas", "url": url, "status": s} for s in statuses]
     test_file = tmp_path / "catalog.json"
     test_file.write_text(json.dumps({"countries": [], "modules": [], "reports": reports}))
@@ -45,7 +45,7 @@ def test_catalog_only_publishes_production_dashboards(monkeypatch, tmp_path):
         data = client.get("/api/catalogo").json()
     finally:
         catalog.load_catalog.cache_clear()
-    assert [r["status"] for r in data["reports"]] == ["produccion"]
+    assert [r["status"] for r in data["reports"]] == ["produccion", "produccion"]
 
 
 def test_rejects_accounts_outside_the_company(monkeypatch):

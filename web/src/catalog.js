@@ -1,9 +1,8 @@
 // Convierte la respuesta de /api/catalogo en la lista de tableros que pinta el portal.
 
+// La API solo entrega tableros en producción.
 export const STATUS = {
   produccion: { label: 'En producción', icon: 'check' },
-  desarrollo: { label: 'En desarrollo', icon: 'progress' },
-  'por-iniciar': { label: 'Por iniciar', icon: 'idle' },
 };
 
 export const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
@@ -51,7 +50,7 @@ export function normalize(catalog) {
         pending: isPending(r.url),
         refresh: r.refresh || '',
         hojas: r.hojas || [],
-        status: STATUS[r.status] ? r.status : 'por-iniciar',
+        status: 'produccion',
       });
     });
   }

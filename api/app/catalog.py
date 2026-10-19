@@ -8,12 +8,29 @@ en el archivo pero no salen de la API.
 """
 
 import json
+import logging
+import unicodedata
 from functools import lru_cache
 
 from .config import settings
 
 PUBLISHED_STATUS = "produccion"
+KNOWN_STATUSES = {PUBLISHED_STATUS, "desarrollo", "por-iniciar"}
+log = logging.getLogger(__name__)
 PUBLIC_FIELDS = ("country", "module", "url", "status", "title", "description", "refresh")
+
+
+def _status(report: dict) -> str:
+    # "Producción" y "produccion" son lo mismo: sin tildes, en minúsculas.
+    raw = unicodedata.normalize("NFKD", str(report.get("status") or ""))
+    status = "".join(c for c in raw if not unicodedata.combining(c)).strip().lower()
+    if status not in KNOWN_STATUSES:
+        log.warning(
+            "Tablero con estado desconocido %r: no se publica (%s)",
+            report.get("status"),
+            report.get("url"),
+        )
+    return status
 
 
 def _public(report: dict) -> dict:
@@ -25,5 +42,9 @@ def _public(report: dict) -> dict:
 def load_catalog() -> dict:
     # El archivo no cambia mientras corre el servicio: se lee una sola vez.
     data = json.loads(settings.catalog_file.read_text(encoding="utf-8"))
-    reports = [_public(r) for r in data["reports"] if r.get("status") == PUBLISHED_STATUS]
+    reports = [
+        {**_public(r), "status": PUBLISHED_STATUS}
+        for r in data["reports"]
+        if _status(r) == PUBLISHED_STATUS
+    ]
     return {**data, "reports": reports}

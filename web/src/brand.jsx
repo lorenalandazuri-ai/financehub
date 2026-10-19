@@ -8,8 +8,6 @@ const ICONS = {
   external: '<path d="M14 4h6v6"/><line x1="20" y1="4" x2="11" y2="13"/><path d="M18 14v6H4V6h6"/>',
   arrow: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/>',
   back: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="11,6 5,12 11,18"/>',
-  progress: '<rect x="3" y="8" width="18" height="8"/><line x1="7" y1="12" x2="12.5" y2="12"/>',
-  idle: '<rect x="5" y="5" width="14" height="14" stroke-dasharray="3 2.6"/>',
   lock: '<rect x="5" y="11" width="14" height="10"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/>',
   check: '<polyline points="5,12.5 10,17 19,7"/>',
   search: '<circle cx="11" cy="11" r="6.5"/><line x1="16" y1="16" x2="21" y2="21"/>',

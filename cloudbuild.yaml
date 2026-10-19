@@ -1,5 +1,5 @@
 # Construye y despliega los dos servicios. Lo dispara el trigger que crea Terraform
-# (dev: push a main; hml y prd: tag v*, con aprobación de Lorena).
+# (dev: push a main; hml: tag v1.2.0-rc1; prd: tag v1.2.0; hml y prd con aprobación de Lorena).
 substitutions:
   _REGION: us-central1
   _REPO: financehub
@@ -24,6 +24,13 @@ steps:
       - |
         docker push ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/web:$SHORT_SHA
         docker push ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/api-catalogo:$SHORT_SHA
+        # Las versiones (hml y prd) también llevan el tag v*: la limpieza de Artifact Registry no las borra.
+        if [ -n "$TAG_NAME" ]; then
+          docker tag ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/web:$SHORT_SHA ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/web:$TAG_NAME
+          docker tag ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/api-catalogo:$SHORT_SHA ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/api-catalogo:$TAG_NAME
+          docker push ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/web:$TAG_NAME
+          docker push ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/api-catalogo:$TAG_NAME
+        fi
   - id: deploy-api
     name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
     entrypoint: gcloud

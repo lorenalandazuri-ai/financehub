@@ -88,8 +88,9 @@ Quién hace qué: João crea los proyectos dev, hml y prd; Davy conecta este rep
 3. `terraform -chdir=infra/terraform/envs/dev init && terraform -chdir=infra/terraform/envs/dev apply`
 4. Pedir a TI un registro DNS A del dominio hacia la salida `lb_ip`. El certificado se activa solo
    cuando el DNS apunta bien (puede tardar hasta ~1 hora).
-5. Desplegar: dev despliega con cada push a `main`. **hml y prd despliegan solo por Cloud Build, con un tag
-   `v*` y la aprobación de Lorena.**
+5. Desplegar: dev despliega con cada push a `main`. **hml y prd despliegan solo por Cloud Build, con la
+   aprobación de Lorena:** primero un tag `v1.2.0-rc1` despliega en hml y, probado ahí, el tag `v1.2.0`
+   despliega en prd.
 
 ## Forma de trabajo
 

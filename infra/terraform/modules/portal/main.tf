@@ -43,8 +43,9 @@ resource "google_artifact_registry_repository" "images" {
   format        = "DOCKER"
   description   = "Imágenes del portal FinanceHub"
 
-  # Limpieza: se borra toda imagen con más de 30 días, salvo las 10 más recientes de cada servicio
-  # (KEEP gana sobre DELETE). Así siempre queda la imagen en uso y varias para volver atrás.
+  # Limpieza: se borra toda imagen con más de 30 días, salvo las 10 más recientes de cada servicio y
+  # las de una versión (tag v*, las que corren en hml y prd). KEEP gana sobre DELETE: así nunca se
+  # borra la imagen en uso ni las necesarias para volver atrás, aunque dev construya muchas más.
   # Una política KEEP sola no borra nada: necesita una DELETE.
   cleanup_policy_dry_run = false
 
@@ -54,6 +55,15 @@ resource "google_artifact_registry_repository" "images" {
     condition {
       tag_state  = "ANY"
       older_than = "2592000s" # 30 días
+    }
+  }
+
+  cleanup_policies {
+    id     = "keep-releases"
+    action = "KEEP"
+    condition {
+      tag_state    = "TAGGED"
+      tag_prefixes = ["v"]
     }
   }
 

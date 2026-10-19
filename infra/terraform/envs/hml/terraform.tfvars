@@ -12,7 +12,6 @@ access_members = [
 cloudbuild_repository = ""
 
 # Como en prd: se despliega solo con aprobación de Lorena.
-# TODO: confirmar su correo.
 build_approvers = [
-  "user:REEMPLAZAR-correo-de-lorena@xertica.com",
+  "user:lorena.landazuri@xertica.com",
 ]
