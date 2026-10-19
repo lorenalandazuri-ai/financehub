@@ -1,4 +1,4 @@
-project_id = "co-xertica-financehub-prd"
+project_id = "xertica-financehub-prd"
 
 # TODO: confirmar el dominio con TI (João/Davy) y que apunten el DNS a la salida lb_ip.
 domain = "financehub.xertica.com"

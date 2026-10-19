@@ -6,9 +6,9 @@ terraform {
   }
 
   # Cuando exista el proyecto: crear el bucket y descomentar.
-  # gcloud storage buckets create gs://co-xertica-financehub-dev-tfstate --location=us-central1 --uniform-bucket-level-access
+  # gcloud storage buckets create gs://xertica-financehub-dev-tfstate --location=us-central1 --uniform-bucket-level-access
   # backend "gcs" {
-  #   bucket = "co-xertica-financehub-dev-tfstate"
+  #   bucket = "xertica-financehub-dev-tfstate"
   #   prefix = "portal"
   # }
 }

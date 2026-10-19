@@ -59,7 +59,7 @@ Abrir http://localhost:8080. Pruebas de la API: `cd api && .venv/bin/pytest -q`.
 - **Local:** `catalog/catalog.json`. Países y módulos + un registro por tablero (`reports`).
 - **dev/prd:** la tabla `financehub.reports` en BigQuery (mismo esquema, `catalog/reports_schema.json`).
   Así Finanzas cambia o agrega un enlace sin volver a desplegar. Carga inicial:
-  `./catalog/load_to_bigquery.sh co-xertica-financehub-dev`.
+  `./catalog/load_to_bigquery.sh xertica-financehub-dev`.
 - Solo se publica lo que está en producción en Looker.
 - **Pendiente:** el enlace de Cobranzas USA es el mismo de Argentina (campo `note`).
 
@@ -72,7 +72,7 @@ Quién hace qué: João crea los proyectos dev y prd; Davy conecta este repo con
 3. `terraform -chdir=infra/terraform/envs/dev init && terraform -chdir=infra/terraform/envs/dev apply`
 4. Pedir a TI un registro DNS A del dominio hacia la salida `lb_ip`. El certificado se activa solo
    cuando el DNS apunta bien (puede tardar hasta ~1 hora).
-5. Cargar el catálogo a BigQuery: `./catalog/load_to_bigquery.sh co-xertica-financehub-dev`.
+5. Cargar el catálogo a BigQuery: `./catalog/load_to_bigquery.sh xertica-financehub-dev`.
 6. Desplegar: dev despliega con cada push a `main`. **prd despliega solo por Cloud Build, con un tag
    `v*` y la aprobación de Lorena.**
 

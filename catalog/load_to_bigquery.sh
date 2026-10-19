@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Carga los tableros de catalog.json a la tabla de BigQuery que crea Terraform.
-# Uso: ./catalog/load_to_bigquery.sh co-xertica-financehub-dev
+# Uso: ./catalog/load_to_bigquery.sh xertica-financehub-dev
 set -euo pipefail
 PROJECT="${1:?Falta el proyecto}"
 DIR="$(cd "$(dirname "$0")" && pwd)"

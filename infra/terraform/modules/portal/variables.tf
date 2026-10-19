@@ -1,5 +1,5 @@
 variable "project_id" {
-  description = "Proyecto de GCP del ambiente (co-xertica-financehub-dev o -prd)."
+  description = "Proyecto de GCP del ambiente (xertica-financehub-dev o -prd)."
   type        = string
 }
 
